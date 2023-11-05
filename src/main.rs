@@ -8,13 +8,16 @@ use std::path::{PathBuf, Path};
 
 
 fn handle_args(args: Vec<String>) -> Option<String> {
-    if args.len() < 2 {
+    // Program should only accept 2 args.
+    if args.len() < 2 || args.len() > 2 {
         return None;
     }
     return Some(args[1].to_string());
 }
 
 fn replace_version(file: String) -> Result<(), std::io::Error> {
+    // Use regex to change "?version=x" inside file
+
     let file1: File = File::open(file.clone())?;
     let reader = io::BufReader::new(file1);
 
@@ -51,6 +54,8 @@ fn get_folder_path(file: String) -> Option<String> {
 }
 
 fn get_file_name(file: String) -> Option<String> {
+    // Returns the file name from the path given
+
     let path = Path::new(&file);
     let file_name: Option<&std::ffi::OsStr> = path.file_name();
 
@@ -61,6 +66,7 @@ fn get_file_name(file: String) -> Option<String> {
 }
 
 fn backup_old_file(file: String) -> Option<bool> {
+    // Copies file to file.old for backup
     let folder_path_option = get_folder_path(file.clone());
     if folder_path_option.is_none() {
         println!("Error parsing folder path.");
