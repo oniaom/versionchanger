@@ -3,8 +3,7 @@ use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::path::{PathBuf, Path};
-
+use std::path::{Path, PathBuf};
 
 
 fn handle_args(args: Vec<String>) -> Option<String> {
@@ -72,7 +71,7 @@ fn backup_old_file(file: String) -> Option<bool> {
         println!("Error parsing folder path.");
         return None;
     }
-    
+
     let folder_path: String = folder_path_option.unwrap();
     let file_name_option = get_file_name(file.clone());
 
@@ -87,9 +86,19 @@ fn backup_old_file(file: String) -> Option<bool> {
     final_path.push(backup_file_name);
     let x = String::from(final_path.to_str().unwrap());
 
-    fs::copy(file, x.clone()).ok();
-    println!("{folder_path}");
-    println!("{x}");
+    let copy_res = fs::copy(file, x.clone());
+    match copy_res {
+        Ok(_) => {}
+        Err(error_message) => {
+            println!(
+                "Something went wrong creating the backup file: {} {}",
+                error_message, x
+            );
+            return None;
+        }
+    }
+    println!("folder: {folder_path}");
+    println!("created: {x}");
     return Some(true);
 }
 
@@ -109,11 +118,9 @@ fn main() {
         return;
     }
 
-    
     let res: Result<(), io::Error> = replace_version(&file);
     match res {
         Ok(_) => {}
         Err(err) => println!("{err}"),
     }
-    
 }
