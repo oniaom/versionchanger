@@ -3,15 +3,14 @@
 
 <head>
 
-    <link rel="manifest" href="./manifest.json?version=12">
-    <link rel="stylesheet" href="./css/styles.css?version=23" async>
+    <link rel="manifest" href="./manifest.json?version=17">
+    <link rel="stylesheet" href="./css/styles.css?version=28" async>
  
 </head>
 
 <body>
     <!-- change ?version=x -->
-    <script src="./app.js?version=20" defer></script>
-
+    <script src="./app.js?version=25" defer></script>
 </body>
 
 </html>

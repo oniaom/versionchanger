@@ -15,21 +15,21 @@ fn handle_args(args: Vec<String>) -> Option<String> {
     return Some(args[1].to_string());
 }
 
-fn replace_version(file: String) -> Result<(), std::io::Error> {
+fn replace_version(file: &str) -> Result<(), std::io::Error> {
     // Use regex to change "?version=x" inside file
 
-    let file1: File = File::open(file.clone())?;
+    let file1: File = File::open(file)?;
     let reader = io::BufReader::new(file1);
 
-    // Define a regular expression to match "version=" and a number
-    let re: Regex = Regex::new(r"version=(\d+)").unwrap();
+    // Define a regular expression to match "?version=" and a number
+    let re: Regex = Regex::new(r"\?version=(\d+)").unwrap();
     let mut new_file_content: String = String::new();
 
     for line in reader.lines() {
         let line = line?;
         let new_line = re.replace_all(&line, |caps: &regex::Captures| {
             let num = caps.get(1).unwrap().as_str().parse::<u32>().unwrap() + 1;
-            format!("version={}", num)
+            format!("?version={}", num)
         });
 
         new_file_content.push_str(&new_line);
@@ -110,7 +110,7 @@ fn main() {
     }
 
     
-    let res: Result<(), io::Error> = replace_version(file);
+    let res: Result<(), io::Error> = replace_version(&file);
     match res {
         Ok(_) => {}
         Err(err) => println!("{err}"),
