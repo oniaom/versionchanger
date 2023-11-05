@@ -3,7 +3,8 @@ use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
+
 
 
 fn handle_args(args: Vec<String>) -> Option<String> {
@@ -39,39 +40,23 @@ fn replace_version(file: String) -> Result<(), std::io::Error> {
 
 fn get_folder_path(file: String) -> Option<String> {
     // Return the path of the file, without the file name
-    let stuff: Vec<&str> = file.split('\\').collect();
+    let path = Path::new(&file);
+    let parent = path.parent();
 
-    // get len
-    let length = stuff.len();
-    // Before anything, if len = 1 then end!
-    if length <= 1 {
-        return None;
+    // Check if there is a parent directory
+    match parent {
+        Some(parent_path) => Some(parent_path.to_string_lossy().to_string()),
+        None => None,
     }
-
-    let mut result = PathBuf::new();
-
-    for i in 0..length - 1 {
-        // For some reason it doesn't add the first backslash...
-        if i == 0 {
-            result.push(stuff[i].to_owned() + "\\");
-            continue;
-        }
-        result.push(stuff[i]);
-    }
-
-    let a = result.as_path().to_str().map(String::from);
-
-    a
 }
 
 fn get_file_name(file: String) -> Option<String> {
-    let stuff: Vec<&str> = file.split('\\').collect();
-    if let Some(last_string) = stuff.last() {
-        println!("The last string is: {}", last_string);
-        // Return the string
-        Some(String::from(last_string.to_string()))
-    } else {
-        None
+    let path = Path::new(&file);
+    let file_name: Option<&std::ffi::OsStr> = path.file_name();
+
+    match file_name {
+        Some(name) => Some(String::from(name.to_string_lossy())),
+        None => None,
     }
 }
 
