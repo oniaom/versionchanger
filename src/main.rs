@@ -92,7 +92,7 @@ fn backup_old_file(file: String) -> Option<bool> {
         Err(error_message) => {
             println!(
                 "Something went wrong creating the backup file: {} {}",
-                error_message, x
+                error_message, x,
             );
             return None;
         }
